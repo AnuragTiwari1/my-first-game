@@ -1,7 +1,4 @@
 import { Snake } from "../components/snake";
-import GAME_CONSTANT from "../constant";
-
-const _blockSize = 32;
 
 export const gameScene = () => {
   scene("game", () => {

@@ -1,22 +1,14 @@
-import { GameObj, Vec2 } from "kaboom";
+import { Vec2 } from "kaboom";
 import GAME_CONSTANT from "../constant";
 
 export class Snake {
-  segments: { pos: Vec2; spriteName: string }[];
-  speed: number;
-  direction: Vec2;
+  private segments: { pos: Vec2; spriteName: string }[];
+  private speed: number;
+  private direction: Vec2;
 
   constructor() {
-    this.segments = [
-      { pos: vec2(0, 6), spriteName: "head_down" },
-      { pos: vec2(0, 5), spriteName: "body_vertical" },
-      { pos: vec2(0, 4), spriteName: "body_vertical" },
-      { pos: vec2(0, 3), spriteName: "body_vertical" },
-      { pos: vec2(0, 2), spriteName: "body_vertical" },
-      { pos: vec2(0, 1), spriteName: "body_vertical" },
-      { pos: vec2(0, 0), spriteName: "tail_up" },
-    ];
-    this.direction = vec2(0, 1); // Initial direction of the snake (moving right)
+    this.segments = this._getInitialSegment(GAME_CONSTANT.INITIAL_SNAKE_SIZE);
+    this.direction = vec2(0, 1); // Initial direction of the snake (moving down)
     this.speed = 1; // Initial speed of the snake
   }
 
@@ -24,18 +16,18 @@ export class Snake {
     let updatedSegments: typeof this.segments = [];
     for (let i = this.segments.length - 1; i >= 0; i--) {
       let { pos: oldPos, spriteName } = this.segments[i];
-      const newPos = this.getNextPositionWithIndex(i);
+      const newPos = this._getNextPositionWithIndex(i);
 
       if (i === 0) {
-        spriteName = `head_${this.getNameFromDirection(this.direction)}`;
+        spriteName = `head_${this._getNameFromDirection(this.direction)}`;
       } else if (i === this.segments.length - 1) {
-        const nextNodePos = this.getNextPositionWithIndex(i - 1);
-        spriteName = `tail_${this.getNameFromDirection(
+        const nextNodePos = this._getNextPositionWithIndex(i - 1);
+        spriteName = `tail_${this._getNameFromDirection(
           newPos.sub(nextNodePos)
         )}`;
       } else {
-        const nextNodePos = this.getNextPositionWithIndex(i - 1);
-        const prevNodePos = this.getNextPositionWithIndex(i + 1);
+        const nextNodePos = this._getNextPositionWithIndex(i - 1);
+        const prevNodePos = this._getNextPositionWithIndex(i + 1);
         const nextDiff = nextNodePos.sub(newPos);
         const prevDiff = newPos.sub(prevNodePos);
 
@@ -104,7 +96,7 @@ export class Snake {
     });
   }
 
-  private getNameFromDirection(dir: Vec2) {
+  private _getNameFromDirection(dir: Vec2) {
     if (dir.eq(vec2(0, 1))) {
       // Moving upwards
       return "down";
@@ -123,7 +115,7 @@ export class Snake {
     }
   }
 
-  private getNextPositionWithIndex(i: number) {
+  private _getNextPositionWithIndex(i: number) {
     let { pos, spriteName } = this.segments[i];
 
     if (i === 0) {
@@ -132,5 +124,18 @@ export class Snake {
       pos = this.segments[i - 1].pos.clone();
     }
     return pos;
+  }
+
+  private _getInitialSegment(size: number) {
+    const segments: typeof this.segments = [];
+    for (let i = 0; i < size; i++) {
+      segments.push({
+        pos: vec2(0, size - i),
+        spriteName:
+          i === 0 ? "head_down" : i === size - 1 ? "tail_up" : "body_vertical",
+      });
+    }
+
+    return segments;
   }
 }
