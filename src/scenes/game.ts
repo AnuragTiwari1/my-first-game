@@ -3,7 +3,7 @@ import { Snake } from "../components/snake";
 export const gameScene = () => {
   scene("game", () => {
     const background = add([fixed(), z(0)]);
-    const ui = add([fixed(), z(100)]);
+    // const ui = add([fixed(), z(100)]);
 
     let run_action = true;
     let timer = 0;

@@ -15,7 +15,7 @@ export class Snake {
   update() {
     let updatedSegments: typeof this.segments = [];
     for (let i = this.segments.length - 1; i >= 0; i--) {
-      let { pos: oldPos, spriteName } = this.segments[i];
+      let { spriteName } = this.segments[i];
       const newPos = this._getNextPositionWithIndex(i);
 
       if (i === 0) {
@@ -116,7 +116,7 @@ export class Snake {
   }
 
   private _getNextPositionWithIndex(i: number) {
-    let { pos, spriteName } = this.segments[i];
+    let { pos } = this.segments[i];
 
     if (i === 0) {
       pos = this.segments[i].pos.add(this.direction.scale(this.speed));
