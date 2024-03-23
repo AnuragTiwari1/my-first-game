@@ -1,11 +1,18 @@
 import kaboom from "kaboom";
 import "./style.css";
-import { gameScene } from "./scenes/game";
+import { gameScene, introScene } from "./scenes";
 
 kaboom({
   global: true,
-  width: 600,
-  height: 600,
+  width: 640,
+  height: 640,
   font: "sans-serif",
   canvas: document.querySelector("#myGameCanvas") as any,
 });
+
+loadSprite("preview", "preview.png");
+
+introScene();
+gameScene();
+
+go("intro");
