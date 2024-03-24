@@ -19,7 +19,7 @@ export class Food {
     let position: Vec2;
 
     do {
-      const v = rand(vec2(0, 0), vec2(20, 20));
+      const v = rand(vec2(1, 1), vec2(19, 19));
       position = vec2(Math.floor(v.x), Math.floor(v.y));
     } while (segments.some((s) => s.eq(position)));
 

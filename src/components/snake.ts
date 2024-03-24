@@ -3,13 +3,18 @@ import GAME_CONSTANT from "../constant";
 
 export class Snake {
   private segments: { pos: Vec2; spriteName: string }[];
-  private speed: number;
   private direction: Vec2;
+  private changeDirectionDisabled: boolean;
 
   constructor() {
     this.segments = this._getInitialSegment(GAME_CONSTANT.INITIAL_SNAKE_SIZE);
     this.direction = vec2(0, 1); // Initial direction of the snake (moving down)
-    this.speed = 1; // Initial speed of the snake
+    this.changeDirectionDisabled = false;
+  }
+
+  reset() {
+    this.segments = this._getInitialSegment(GAME_CONSTANT.INITIAL_SNAKE_SIZE);
+    this.direction = vec2(0, 1); // Initial direction of the snake
   }
 
   update(shouldGrow: boolean) {
@@ -45,7 +50,6 @@ export class Snake {
         if (crossProduct === 0) {
           spriteName = nextDiff.x === 0 ? "body_vertical" : "body_horizontal";
         } else if (crossProduct > 0) {
-          //snake is moving anti-clockwise
           if (nextDiff.x === -1 || prevDiff.x === -1) {
             spriteName =
               prevDiff.y === 1 || nextDiff.y === 1
@@ -57,11 +61,8 @@ export class Snake {
               prevDiff.y === 1 || nextDiff.y === 1
                 ? "body_topright"
                 : "body_topleft";
-            console.log("inside second condition", spriteName);
           }
         } else {
-          //snake is moving clockwise
-          //snake is moving anti-clockwise
           if (nextDiff.x === -1 || prevDiff.x === -1) {
             spriteName =
               prevDiff.y === 1 || nextDiff.y === 1
@@ -73,7 +74,6 @@ export class Snake {
               prevDiff.y === 1 || nextDiff.y === 1
                 ? "body_bottomleft"
                 : "body_bottomright";
-            console.log("inside second condition", spriteName);
           }
         }
       }
@@ -82,11 +82,13 @@ export class Snake {
     }
 
     this.segments = updatedSegments;
+    this.changeDirectionDisabled = false;
   }
 
   changeDirection(dir: Vec2) {
-    if (dir.dot(this.direction) === 0) {
+    if (dir.dot(this.direction) === 0 && !this.changeDirectionDisabled) {
       this.direction = dir;
+      this.changeDirectionDisabled = true;
     }
   }
 
@@ -100,7 +102,7 @@ export class Snake {
           segment.pos.x * GAME_CONSTANT.BLOCK_SIZE,
           segment.pos.y * GAME_CONSTANT.BLOCK_SIZE
         ),
-        area(),
+        area({ scale: 0.5, offset: vec2(24, 24) }),
         scale(0.8),
         "snake",
       ]);
@@ -137,15 +139,15 @@ export class Snake {
     }
 
     if (i === 0) {
-      pos = this.segments[i].pos.add(this.direction.scale(this.speed));
+      pos = this.segments[i].pos.add(this.direction);
 
-      if (pos.x > width() / GAME_CONSTANT.BLOCK_SIZE) {
+      if (pos.x >= width() / GAME_CONSTANT.BLOCK_SIZE) {
         pos.x = 0;
       } else if (pos.x < 0) {
         pos.x = width() / GAME_CONSTANT.BLOCK_SIZE;
       }
 
-      if (pos.y > height() / GAME_CONSTANT.BLOCK_SIZE) {
+      if (pos.y >= height() / GAME_CONSTANT.BLOCK_SIZE) {
         pos.y = 0;
       } else if (pos.y < 0) {
         pos.y = height() / GAME_CONSTANT.BLOCK_SIZE;
@@ -161,7 +163,7 @@ export class Snake {
     const segments: typeof this.segments = [];
     for (let i = 0; i < size; i++) {
       segments.push({
-        pos: vec2(0, size - i),
+        pos: vec2(1, size - i),
         spriteName:
           i === 0 ? "head_down" : i === size - 1 ? "tail_up" : "body_vertical",
       });
