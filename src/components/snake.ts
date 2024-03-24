@@ -19,11 +19,15 @@ export class Snake {
       const newPos = this._getNextPositionWithIndex(i);
 
       if (i === 0) {
-        spriteName = `head_${this._getNameFromDirection(this.direction)}`;
+        spriteName = `head_${this._getNameFromDirection(
+          this.direction,
+          spriteName.split("_")[1]
+        )}`;
       } else if (i === this.segments.length - 1) {
         const nextNodePos = this._getNextPositionWithIndex(i - 1);
         spriteName = `tail_${this._getNameFromDirection(
-          newPos.sub(nextNodePos)
+          newPos.sub(nextNodePos),
+          spriteName.split("_")[1]
         )}`;
       } else {
         const nextNodePos = this._getNextPositionWithIndex(i - 1);
@@ -96,7 +100,7 @@ export class Snake {
     });
   }
 
-  private _getNameFromDirection(dir: Vec2) {
+  private _getNameFromDirection(dir: Vec2, defaultValue?: string) {
     if (dir.eq(vec2(0, 1))) {
       // Moving upwards
       return "down";
@@ -111,7 +115,7 @@ export class Snake {
       return "left";
     } else {
       // Default sprite name
-      return "head_right"; // Choose a default sprite name or handle error as needed
+      return defaultValue || "";
     }
   }
 
@@ -120,9 +124,22 @@ export class Snake {
 
     if (i === 0) {
       pos = this.segments[i].pos.add(this.direction.scale(this.speed));
+
+      if (pos.x > width() / GAME_CONSTANT.BLOCK_SIZE) {
+        pos.x = 0;
+      } else if (pos.x < 0) {
+        pos.x = width() / GAME_CONSTANT.BLOCK_SIZE;
+      }
+
+      if (pos.y > height() / GAME_CONSTANT.BLOCK_SIZE) {
+        pos.y = 0;
+      } else if (pos.y < 0) {
+        pos.y = height() / GAME_CONSTANT.BLOCK_SIZE;
+      }
     } else {
       pos = this.segments[i - 1].pos.clone();
     }
+
     return pos;
   }
 
