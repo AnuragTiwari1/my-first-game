@@ -12,11 +12,17 @@ export class Snake {
     this.speed = 1; // Initial speed of the snake
   }
 
-  update() {
+  update(shouldGrow: boolean) {
     let updatedSegments: typeof this.segments = [];
+
+    if (shouldGrow) {
+      const newHead = this._getNextPositionWithIndex(0, false);
+      this.segments = [{ ...this.segments[0], pos: newHead }, ...this.segments];
+    }
+
     for (let i = this.segments.length - 1; i >= 0; i--) {
       let { spriteName } = this.segments[i];
-      const newPos = this._getNextPositionWithIndex(i);
+      const newPos = this._getNextPositionWithIndex(i, shouldGrow);
 
       if (i === 0) {
         spriteName = `head_${this._getNameFromDirection(
@@ -24,14 +30,14 @@ export class Snake {
           spriteName.split("_")[1]
         )}`;
       } else if (i === this.segments.length - 1) {
-        const nextNodePos = this._getNextPositionWithIndex(i - 1);
+        const nextNodePos = this._getNextPositionWithIndex(i - 1, shouldGrow);
         spriteName = `tail_${this._getNameFromDirection(
           newPos.sub(nextNodePos),
           spriteName.split("_")[1]
         )}`;
       } else {
-        const nextNodePos = this._getNextPositionWithIndex(i - 1);
-        const prevNodePos = this._getNextPositionWithIndex(i + 1);
+        const nextNodePos = this._getNextPositionWithIndex(i - 1, shouldGrow);
+        const prevNodePos = this._getNextPositionWithIndex(i + 1, shouldGrow);
         const nextDiff = nextNodePos.sub(newPos);
         const prevDiff = newPos.sub(prevNodePos);
 
@@ -94,10 +100,15 @@ export class Snake {
           segment.pos.x * GAME_CONSTANT.BLOCK_SIZE,
           segment.pos.y * GAME_CONSTANT.BLOCK_SIZE
         ),
+        area(),
         scale(0.8),
         "snake",
       ]);
     });
+  }
+
+  get body(): typeof this.segments {
+    return this.segments;
   }
 
   private _getNameFromDirection(dir: Vec2, defaultValue?: string) {
@@ -119,8 +130,11 @@ export class Snake {
     }
   }
 
-  private _getNextPositionWithIndex(i: number) {
+  private _getNextPositionWithIndex(i: number, shouldGrow: boolean) {
     let { pos } = this.segments[i];
+    if (shouldGrow) {
+      return pos;
+    }
 
     if (i === 0) {
       pos = this.segments[i].pos.add(this.direction.scale(this.speed));

@@ -26,6 +26,7 @@ loadSprite("body_horizontal", "body_horizontal.png");
 loadSprite("body_topleft", "body_topleft.png");
 loadSprite("body_topright", "body_topright.png");
 loadSprite("body_vertical", "body_vertical.png");
+loadSprite("apple", "apple.png");
 
 introScene();
 gameScene();
