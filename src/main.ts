@@ -1,6 +1,6 @@
 import kaboom from "kaboom";
 import "./style.css";
-import { gameScene, introScene } from "./scenes";
+import { levelOne, introScene, levelTwo } from "./scenes";
 
 kaboom({
   global: true,
@@ -30,6 +30,7 @@ loadSprite("apple", "apple.png");
 loadSprite("grass", "grass.png");
 
 introScene();
-gameScene();
+levelOne();
+levelTwo();
 
 go("intro");

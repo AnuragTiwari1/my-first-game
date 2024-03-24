@@ -1,4 +1,5 @@
-import { gameScene } from "./game";
+import { levelOne } from "./levelOne";
+import { levelTwo } from "./levelTwo";
 import { introScene } from "./intro";
 
-export { gameScene, introScene };
+export { levelOne, introScene, levelTwo };

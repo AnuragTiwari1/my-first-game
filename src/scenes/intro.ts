@@ -29,7 +29,7 @@ export const introScene = () => {
     ]);
 
     onKeyRelease("space", () => {
-      go("game");
+      go("levelOne");
     });
   });
 };

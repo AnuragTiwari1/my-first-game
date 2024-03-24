@@ -34,6 +34,10 @@ export class GameController {
     this.food = new Food();
   }
 
+  get currentScore(): number {
+    return this.score;;
+  }
+
   onUpdate() {
     if (!this.runAction) return;
     this.timer += dt();
